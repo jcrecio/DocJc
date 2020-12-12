@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:DocJc.Converters;assembly=DocJc"
+             xmlns:viewModels="clr-namespace:DocJc.ViewModels;assembly=DocJc"
+             x:Name="DiagnosisSearchViewModelContext"
+             x:Class="DocJc.Views.DiagnosisSearch"
+             Title="{Binding Title}"
+             BindingContext="{Binding DiagnosisSearchViewModel, 
+                Source={StaticResource Locator}}" >
+    <Page.Resources>
+        <converters:PositiveIntegerToBooleanConverter x:Key="PositiveIntegerToBooleanConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Editor Placeholder="Search for symptoms..." 
+                Text="{Binding Path=SymptomSearchCriteria}"
+                Grid.Row="0"/>
+        
+        <!--<Image Grid.Row="2"
+               IsVisible="{Binding IsLoading}"
+               Source="https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif" />-->
+        <Frame Grid.Row="1"
+               IsVisible="{Binding FoundDiagnostics.Count, 
+                    Converter={StaticResource PositiveIntegerToBooleanConverter}}"
+               BackgroundColor="GreenYellow" 
+               Padding="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackLayout Grid.Column="0"
+                             Orientation="Horizontal"
+                             Padding="5">
+                    <Label FontSize="Large" Text="Diagnostics found:"></Label>
+                    <Label FontSize="Large" Text="{Binding FoundDiagnostics.Count}"></Label>
+                </StackLayout>
+                <StackLayout Grid.Column="2"
+                             Orientation="Horizontal"
+                             Padding="5">
+                    <Label
+                        TextColor="Blue"
+                        FontAttributes="Bold"
+                        FontSize="Large" 
+                        Text="See details"></Label>
+                </StackLayout>
+            </Grid>
+        </Frame>
+
+        <ListView Grid.Row="2"
+                  ItemsSource="{Binding FoundSymptoms}"
+                  IsVisible="{Binding AreSymptomsReady}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout 
+                            Orientation="Horizontal"
+                            Padding="10" >
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding SymptomTappedCommand, 
+                                        Source={RelativeSource AncestorType={x:Type viewModels:DiagnosisSearchViewModel}}}"
+                                    CommandParameter="{Binding .}"/>
+                            </StackLayout.GestureRecognizers>
+
+                            <Image IsVisible="{Binding IsSelected}"
+                                   Source="tick.png" 
+                                   HeightRequest="20" 
+                                   WidthRequest="20" />
+
+                            <Label Text="{Binding Name}"
+                                   LineBreakMode="NoWrap" 
+                                   Style="{DynamicResource ListItemTextStyle}"
+                                   FontSize="16" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!--IsVisible="{Binding FoundDiagnostics, Converter={StaticResource ListAnyToBooleanConverter}}">-->
+
+        <!--<ListView Grid.Row="4"
+                  ItemsSource="{Binding FoundDiagnostics}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="10" >
+                            <Label Text="{Binding Issue.Name}"
+                                   LineBreakMode="NoWrap" 
+                                   Style="{DynamicResource ListItemTextStyle}"
+                                   FontSize="16" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>-->
+    </Grid>
+</ContentPage>

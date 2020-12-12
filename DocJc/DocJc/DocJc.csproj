@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Remove="Assets\Images\loading.gif" />
+    <None Remove="Assets\Images\tick.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Images\loading.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Images\tick.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.0.0" />
+    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
+    <PackageReference Include="Behaviors.Forms" Version="1.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\DiagnosisSearch.xaml.cs">
+      <DependentUpon>DiagnosisSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\DiagnosticDetail.xaml.cs">
+      <DependentUpon>DiagnosticDetail.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DocJc.Contracts\DocJc.Contracts.csproj" />
+    <ProjectReference Include="..\..\DocJc.Models\DocJc.Model.csproj" />
+    <ProjectReference Include="..\..\DocJc.Service\DocJc.Service.csproj" />
+  </ItemGroup>
+</Project>
