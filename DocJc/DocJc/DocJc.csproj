@@ -36,8 +36,8 @@
     <Compile Update="Views\DiagnosisSearch.xaml.cs">
       <DependentUpon>DiagnosisSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\DiagnosticDetail.xaml.cs">
-      <DependentUpon>DiagnosticDetail.xaml</DependentUpon>
+    <Compile Update="Views\DiagnosticList.xaml.cs">
+      <DependentUpon>DiagnosticList.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

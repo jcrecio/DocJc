@@ -3,17 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:DocJc.Converters;assembly=DocJc"
              xmlns:viewModels="clr-namespace:DocJc.ViewModels;assembly=DocJc"
-             x:Name="DiagnosisSearchViewModelContext"
+             x:Name="DiagnosisSearchView"
              x:Class="DocJc.Views.DiagnosisSearch"
              Title="{Binding Title}"
              BindingContext="{Binding DiagnosisSearchViewModel, 
                 Source={StaticResource Locator}}" >
     <Page.Resources>
         <converters:PositiveIntegerToBooleanConverter x:Key="PositiveIntegerToBooleanConverter"/>
+        <converters:SymptomListToStringConverter x:Key="SymptomListToStringConverter"/>
     </Page.Resources>
 
-    <Grid>
+    <Grid RowSpacing="0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -21,21 +23,42 @@
         <Editor Placeholder="Search for symptoms..." 
                 Text="{Binding Path=SymptomSearchCriteria}"
                 Grid.Row="0"/>
-        
+        <StackLayout
+            Grid.Row="1"
+            Padding="3"
+            BackgroundColor="DarkSeaGreen" 
+            Orientation="Horizontal"
+            Margin="0"
+            BindableLayout.ItemsSource="{Binding SelectedSymptoms}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Label 
+                        Text="{Binding Name}"
+                        FontSize="Medium"></Label>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </StackLayout>
         <!--<Image Grid.Row="2"
                IsVisible="{Binding IsLoading}"
                Source="https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif" />-->
-        <Frame Grid.Row="1"
+        <Frame Grid.Row="2"
                IsVisible="{Binding FoundDiagnostics.Count, 
                     Converter={StaticResource PositiveIntegerToBooleanConverter}}"
                BackgroundColor="GreenYellow" 
-               Padding="0">
+               Padding="0"
+               Margin="0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+
+                <!--<StackLayout Grid.Row="0">
+                    <Label 
+                        Text="{Binding SelectedSymptoms, 
+                        Converter={StaticResource ListToStringConverter}}"></Label>
+                </StackLayout>-->
                 <StackLayout Grid.Column="0"
                              Orientation="Horizontal"
                              Padding="5">
@@ -54,7 +77,7 @@
             </Grid>
         </Frame>
 
-        <ListView Grid.Row="2"
+        <ListView Grid.Row="3"
                   ItemsSource="{Binding FoundSymptoms}"
                   IsVisible="{Binding AreSymptomsReady}">
             <ListView.ItemTemplate>

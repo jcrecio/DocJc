@@ -86,8 +86,8 @@
             }
         }
 
-        private IList<BaseEntityViewModel> _selectedSymptoms;
-        public IList<BaseEntityViewModel> SelectedSymptoms
+        private ObservableCollection<BaseEntityViewModel> _selectedSymptoms;
+        public ObservableCollection<BaseEntityViewModel> SelectedSymptoms
         {
             get => _selectedSymptoms;
             set => SetProperty(ref _selectedSymptoms, value);
