@@ -1,15 +1,22 @@
-﻿using DocJc.ViewModels;
-using System.ComponentModel;
-using Xamarin.Forms;
-
-namespace DocJc.Views
+﻿namespace DocJc.Views
 {
-    public partial class ItemDetailPage : ContentPage
+    using CommonServiceLocator;
+    using ViewModels;
+    using Xamarin.Forms;
+
+    public partial class DiagnosticList : ContentPage
     {
-        public ItemDetailPage()
+        public DiagnosticList()
         {
             InitializeComponent();
-            BindingContext = new ItemDetailViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            // TODO: Do this without this page behind code, use MVVM behaviors
+            //ServiceLocator.Current.GetInstance<DiagnosticListViewModel>().OnAppearing();
         }
     }
 }

@@ -10,7 +10,6 @@
                 Source={StaticResource Locator}}" >
     <Page.Resources>
         <converters:PositiveIntegerToBooleanConverter x:Key="PositiveIntegerToBooleanConverter"/>
-        <converters:SymptomListToStringConverter x:Key="SymptomListToStringConverter"/>
     </Page.Resources>
 
     <Grid RowSpacing="0">
@@ -26,15 +25,31 @@
         <StackLayout
             Grid.Row="1"
             Padding="3"
-            BackgroundColor="DarkSeaGreen" 
             Orientation="Horizontal"
+            VerticalOptions="Center"
             Margin="0"
             BindableLayout.ItemsSource="{Binding SelectedSymptoms}">
             <BindableLayout.ItemTemplate>
                 <DataTemplate>
-                    <Label 
-                        Text="{Binding Name}"
-                        FontSize="Medium"></Label>
+                    <StackLayout 
+                        Orientation="Horizontal"
+                        BackgroundColor="Aquamarine"
+                        VerticalOptions="Center"
+                        Padding="3">
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding RemoveSymptomCommand, 
+                                        Source={RelativeSource AncestorType={x:Type viewModels:DiagnosisSearchViewModel}}}"
+                                CommandParameter="{Binding .}"/>
+                        </StackLayout.GestureRecognizers>
+                        <Label 
+                            Text="x"
+                            FontAttributes="Bold"
+                            FontSize="Medium"></Label>
+                        <Label 
+                            Text="{Binding Name}"
+                            FontSize="Medium"></Label>
+                    </StackLayout>
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
         </StackLayout>
@@ -54,11 +69,6 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!--<StackLayout Grid.Row="0">
-                    <Label 
-                        Text="{Binding SelectedSymptoms, 
-                        Converter={StaticResource ListToStringConverter}}"></Label>
-                </StackLayout>-->
                 <StackLayout Grid.Column="0"
                              Orientation="Horizontal"
                              Padding="5">
@@ -67,12 +77,20 @@
                 </StackLayout>
                 <StackLayout Grid.Column="2"
                              Orientation="Horizontal"
+                             VerticalOptions="Center"
                              Padding="5">
                     <Label
                         TextColor="Blue"
                         FontAttributes="Bold"
-                        FontSize="Large" 
-                        Text="See details"></Label>
+                        FontSize="Medium" 
+                        Text="See details">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding GoToDiagnosticListCommand, 
+                                        Source={RelativeSource AncestorType={x:Type viewModels:DiagnosisSearchViewModel}}}"
+                                CommandParameter="{Binding .}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
                 </StackLayout>
             </Grid>
         </Frame>
@@ -107,23 +125,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <!--IsVisible="{Binding FoundDiagnostics, Converter={StaticResource ListAnyToBooleanConverter}}">-->
-
-        <!--<ListView Grid.Row="4"
-                  ItemsSource="{Binding FoundDiagnostics}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Padding="10" >
-                            <Label Text="{Binding Issue.Name}"
-                                   LineBreakMode="NoWrap" 
-                                   Style="{DynamicResource ListItemTextStyle}"
-                                   FontSize="16" />
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
     </Grid>
 </ContentPage>

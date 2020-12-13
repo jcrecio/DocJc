@@ -1,7 +1,11 @@
 ﻿namespace DocJc.Model.Models
 {
-    public class Diagnostic
+    using DocJc.Model.Models;
+
+    public class Diagnostic: IBaseEntity
     {
+        public string ID => Issue.ID;
+        public string Name => Issue.Name;
         public Issue Issue { get; set; }
         public SpecialisationDetail[] Specialisation { get; set; }
     }

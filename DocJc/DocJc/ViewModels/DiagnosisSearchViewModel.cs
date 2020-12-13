@@ -4,19 +4,19 @@
     using Contracts.Services;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Commands;
     using Extensions;
     using Mapper;
     using Model.ViewModel;
+    using Views;
     using Xamarin.Forms;
 
     public class DiagnosisSearchViewModel : BaseViewModel
     {
+        private readonly IMemoryStore<DiagnosticViewModel> _diagnosticMemoryStore;
         public ObservableCollection<BaseEntityViewModel> FoundSymptoms { get; set; }
         public ObservableCollection<DiagnosticViewModel> FoundDiagnostics { get; set; }
 
@@ -26,29 +26,29 @@
         public IAsyncCommand<IList<BaseEntityViewModel>> LoadItemsCommand { get; }
         public IAsyncCommand<IList<DiagnosticViewModel>> LoadDiagnosticsCommand { get; }
 
-        public DiagnosisSearchViewModel(IHealthService healthService, 
-            DiagnosticMapper diagnosticMapper, 
-            BaseEntityMapper baseEntityMapper)
+        public DiagnosisSearchViewModel(IHealthService healthService,
+            DiagnosticMapper diagnosticMapper,
+            BaseEntityMapper baseEntityMapper,
+            IMemoryStore<DiagnosticViewModel> diagnosticMemoryStore)
         {
+            _diagnosticMemoryStore = diagnosticMemoryStore;
             Title = "Diagnosis";
             FoundSymptoms = new ObservableCollection<BaseEntityViewModel>();
             FoundDiagnostics = new ObservableCollection<DiagnosticViewModel>();
             LoadItemsCommand = new GetSymptomsCommandAsync(healthService, baseEntityMapper);
             LoadDiagnosticsCommand = new GetDiagnosticsCommandAsync(healthService, diagnosticMapper, baseEntityMapper);
             SelectedSymptoms = new ObservableCollection<BaseEntityViewModel>();
-        }
-
-        private Image _tick;
-        public Image Tick
-        {
-            get
+            SelectedSymptoms.CollectionChanged += (sender, e) =>
             {
-                if (_tick == null)
+                if (SelectedSymptoms.Any())
                 {
-                    _tick = new Image { Source = ImageSource.FromFile("Assets/Images/tick.png"), Margin = new Thickness(0, -5, 0, 10), HeightRequest = 20, WidthRequest = 20 };
+                    ExecuteLoadDiagnostics();
                 }
-                return _tick;
-            }
+                else
+                {
+                    FoundDiagnostics.Clear();
+                }
+            };
         }
 
         private string _symptomSearchCriteria;
@@ -75,10 +75,10 @@
                     try
                     {
                         FoundSymptoms.Add(symptom);
-
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
                 }
 
@@ -93,14 +93,26 @@
             set => SetProperty(ref _selectedSymptoms, value);
         }
 
-
         private ICommand _onSymptomTappedCommand;
-
-        public ICommand SymptomTappedCommand 
+        public ICommand SymptomTappedCommand
             => _onSymptomTappedCommand ?? (_onSymptomTappedCommand = new Command(OnSymptomTapped));
 
+        public void OnSymptomTapped(object item)
+        {
+            var itemTapped = (BaseEntityViewModel)item;
+            if (itemTapped == null)
+            {
+                return;
+            }
 
-        public async void OnSymptomTapped(object item)
+            SelectSymptom(itemTapped);
+        }
+
+        private ICommand _removeSymptomCommand;
+        public ICommand RemoveSymptomCommand
+            => _removeSymptomCommand ?? (_removeSymptomCommand = new Command(OnRemoveSymptom));
+
+        public void OnRemoveSymptom(object item)
         {
             var itemSelected = (BaseEntityViewModel)item;
             if (itemSelected == null)
@@ -108,40 +120,65 @@
                 return;
             }
 
-            var isAlreadySelected = SelectedSymptoms.Contains(itemSelected);
-            itemSelected.IsSelected = !isAlreadySelected;
+            RemoveSymptom(itemSelected);
+        }
 
-            if (itemSelected.IsSelected)
+        public void SelectSymptom(BaseEntityViewModel item)
+        {
+            if (!SelectedSymptoms.Contains(item))
             {
-                SelectedSymptoms.Add(itemSelected);
+                AddSymptom(item);
             }
             else
             {
-                SelectedSymptoms.Remove(itemSelected);
-            }
-
-            if (SelectedSymptoms.Any())
-            {
-                await ExecuteLoadDiagnostics();
-            }
-            else
-            {
-                FoundDiagnostics.Clear();
+                RemoveSymptom(item);
             }
         }
 
-        private async Task ExecuteLoadDiagnostics()
+        private void AddSymptom(BaseEntityViewModel item)
+        {
+            item.IsSelected = true;
+            SelectedSymptoms.Add(item);
+        }
+
+        private void RemoveSymptom(BaseEntityViewModel item)
+        {
+            item.IsSelected = false;
+            SelectedSymptoms.Remove(item);
+        }
+
+        private async void ExecuteLoadDiagnostics()
         {
             if (LoadDiagnosticsCommand.CanExecute(FoundSymptoms))
             {
-                FoundDiagnostics.Clear();
+                ClearDiagnostics();
 
                 var diagnostics = await LoadDiagnosticsCommand.ExecuteAsync(SelectedSymptoms);
                 foreach (var diagnostic in diagnostics)
                 {
-                    FoundDiagnostics.Add(diagnostic);
+                    AddDiagnostic(diagnostic);
                 }
             }
+        }
+
+        private void ClearDiagnostics()
+        {
+            _diagnosticMemoryStore.Clear();
+            FoundDiagnostics.Clear();
+        }
+
+        private void AddDiagnostic(DiagnosticViewModel diagnosticViewModel)
+        {
+            _diagnosticMemoryStore.Add(diagnosticViewModel);
+            FoundDiagnostics.Add(diagnosticViewModel);
+        }
+
+        private ICommand _goToDiagnosticListCommand;
+        public ICommand GoToDiagnosticListCommand
+            => _goToDiagnosticListCommand ?? (_goToDiagnosticListCommand = new Command(GoToDiagnosticList));
+        public async void GoToDiagnosticList(object obj)
+        {
+            await Shell.Current.GoToAsync($"{nameof(DiagnosticList)}");
         }
     }
 }

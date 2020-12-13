@@ -14,5 +14,8 @@
 
         public LoginViewModel LoginViewModel
             => ServiceLocator.Current.GetInstance<LoginViewModel>();
+
+        public DiagnosticListViewModel DiagnosticListViewModel
+            => ServiceLocator.Current.GetInstance<DiagnosticListViewModel>();
     }
 }

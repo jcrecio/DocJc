@@ -1,5 +1,6 @@
 ﻿namespace DocJc.Mapper
 {
+    using System.Collections.ObjectModel;
     using System.Linq;
     using Model.Models;
     using Model.ViewModel;
@@ -21,13 +22,14 @@
                     ProfName = diagnostic.Issue.ProfName,
                     Ranking = diagnostic.Issue.Ranking
                 }, 
-                Specialisation = diagnostic.Specialisation.Select(d => new SpecialisationDetailViewModel
+                Specialisation = new ObservableCollection<SpecialisationDetailViewModel>(
+                    diagnostic.Specialisation.Select(d => new SpecialisationDetailViewModel
                 {
                     ID = d.ID,
                     Name = d.Name,
                     IsSelected = false,
                     SpecialistID = d.SpecialistID
-                }).ToArray()
+                }))
             };
         }
     }

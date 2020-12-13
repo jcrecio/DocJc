@@ -5,6 +5,7 @@
     using CommonServiceLocator;
     using Contracts.Services;
     using Mapper;
+    using Model.ViewModel;
     using Service;
     using Settings;
     using ViewModels;
@@ -17,8 +18,10 @@
 
             containerBuilder.RegisterType<DiagnosisSearchViewModel>().AsSelf();
             containerBuilder.RegisterType<LoginViewModel>().AsSelf();
+            containerBuilder.RegisterType<DiagnosticListViewModel>().AsSelf();
             containerBuilder.RegisterType<HealthService>().As<IHealthService>();
             containerBuilder.RegisterType<TokenProvider>().As<ITokenProvider>();
+            containerBuilder.RegisterType<DiagnosticMemoryStore>().As<IMemoryStore<DiagnosticViewModel>>().SingleInstance();
             containerBuilder.RegisterType<BaseEntityMapper>().AsSelf();
             containerBuilder.RegisterType<DiagnosticMapper>().AsSelf();
             containerBuilder.RegisterType<AppSettingsManager>().As<IAppSettingsManager>();

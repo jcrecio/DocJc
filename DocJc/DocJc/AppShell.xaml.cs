@@ -16,7 +16,8 @@
 
         private void InitializeRouting()
         {
-            Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
+            Routing.RegisterRoute(nameof(DiagnosticList), typeof(DiagnosticList));
+            Routing.RegisterRoute(nameof(DiagnosisSearch), typeof(DiagnosisSearch));
             Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
