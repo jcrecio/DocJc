@@ -22,6 +22,8 @@
         {
             _diagnosticMemoryStore = diagnosticMemoryStore;
             _foundDiagnostics = new ObservableCollection<DiagnosticViewModel>();
+            Title = "Diagnostics";
+
             OnAppearing();
         }
 
